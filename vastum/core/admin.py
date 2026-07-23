@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Channel, Comment, Like, MoneroPayment, Video, WatchHistory
+from .models import Category, Channel, Comment, Like, MoneroPayment, Video, WatchHistory
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+  list_display = ('name', 'slug')
+  prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Channel)
@@ -10,8 +16,15 @@ class ChannelAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-  list_display = ('title', 'channel', 'views', 'is_restricted', 'created_at')
-  list_filter = ('is_restricted', 'created_at')
+  list_display = (
+      'title',
+      'channel',
+      'category',
+      'views',
+      'is_restricted',
+      'created_at',
+  )
+  list_filter = ('is_restricted', 'category', 'created_at')
   search_fields = ('title', 'description')
 
 

@@ -5,11 +5,12 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import VideoUploadForm
-from .models import Video
+from .models import Category, Video
 
 
 def video_list_view(request):
   query = request.GET.get('q', '').strip()
+  category_slug = request.GET.get('category', '').strip()
   sort_by = request.GET.get('sort', 'latest')
   restricted_mode = request.session.get('restricted_mode', False)
 
@@ -22,6 +23,9 @@ def video_list_view(request):
     videos = videos.filter(
         Q(title__icontains=query) | Q(description__icontains=query)
     )
+
+  if category_slug:
+    videos = videos.filter(category__slug=category_slug)
 
   if sort_by == 'most_viewed':
     videos = videos.order_by('-views')
@@ -38,9 +42,13 @@ def video_list_view(request):
   page_number = request.GET.get('page')
   page_obj = paginator.get_page(page_number)
 
+  categories = Category.objects.all()
+
   context = {
       'videos': page_obj,
+      'categories': categories,
       'query': query,
+      'selected_category': category_slug,
       'sort_by': sort_by,
       'last_page': paginator.num_pages,
   }
@@ -54,11 +62,13 @@ def video_detail_view(request, pk):
   video.save(update_fields=['views'])
 
   related_videos = Video.objects.exclude(pk=video.pk)[:8]
-  context = {'video': video, 'related_videos': related_videos}
+  categories = Category.objects.all()
+  context = {
+      'video': video,
+      'related_videos': related_videos,
+      'categories': categories,
+  }
   return render(request, 'core/video_detail.html', context)
-
-
-# --- Authentication Views ---
 
 
 def register_view(request):
@@ -70,7 +80,10 @@ def register_view(request):
       return redirect('video_list')
   else:
     form = UserCreationForm()
-  return render(request, 'core/register.html', {'form': form})
+  categories = Category.objects.all()
+  return render(
+      request, 'core/register.html', {'form': form, 'categories': categories}
+  )
 
 
 def login_view(request):
@@ -82,15 +95,15 @@ def login_view(request):
       return redirect('video_list')
   else:
     form = AuthenticationForm()
-  return render(request, 'core/login.html', {'form': form})
+  categories = Category.objects.all()
+  return render(
+      request, 'core/login.html', {'form': form, 'categories': categories}
+  )
 
 
 def logout_view(request):
   logout(request)
   return redirect('video_list')
-
-
-# --- Creator Upload View ---
 
 
 @login_required
@@ -99,16 +112,15 @@ def upload_video_view(request):
     form = VideoUploadForm(request.POST, request.FILES)
     if form.is_valid():
       video = form.save(commit=False)
-      # Ensure user owns the channel selected
       if video.channel.owner == request.user:
         video.save()
         return redirect('video_list')
   else:
     form = VideoUploadForm()
-  return render(request, 'core/upload.html', {'form': form})
-
-
-# --- Monero Payment Gateway Placeholder View ---
+  categories = Category.objects.all()
+  return render(
+      request, 'core/upload.html', {'form': form, 'categories': categories}
+  )
 
 
 @login_required
@@ -116,5 +128,9 @@ def monero_payment_view(request):
   platform_monero_address = (
       '888888888888888888888888888888888888888888888888888888888888888888888888888888'
   )
-  context = {'monero_address': platform_monero_address}
+  categories = Category.objects.all()
+  context = {
+      'monero_address': platform_monero_address,
+      'categories': categories,
+  }
   return render(request, 'core/monero_pay.html', context)

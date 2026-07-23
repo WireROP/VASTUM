@@ -2,6 +2,18 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class Category(models.Model):
+  name = models.CharField(max_length=100, unique=True)
+  slug = models.SlugField(max_length=100, unique=True)
+
+  class Meta:
+    verbose_name_plural = 'Categories'
+    ordering = ['name']
+
+  def __str__(self):
+    return self.name
+
+
 class Channel(models.Model):
   owner = models.ForeignKey(
       User, on_delete=models.CASCADE, related_name='channels'
@@ -20,6 +32,13 @@ class Video(models.Model):
   description = models.TextField()
   channel = models.ForeignKey(
       Channel, on_delete=models.CASCADE, related_name='videos'
+  )
+  category = models.ForeignKey(
+      Category,
+      on_delete=models.SET_NULL,
+      null=True,
+      blank=True,
+      related_name='videos',
   )
   file_1080p = models.FileField(upload_to='videos/1080p/', blank=True, null=True)
   file_720p = models.FileField(upload_to='videos/720p/', blank=True, null=True)

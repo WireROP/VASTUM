@@ -14,11 +14,11 @@
         .btn-upload { background: #ff3366; padding: 8px 15px; border-radius: 4px; color: white !important; font-weight: bold; }
         
         .main-container { display: flex; }
-        sidebar { width: 220px; background: #181818; padding: 15px; min-height: 100vh; border-right: 1px solid #333; }
+        sidebar { width: 220px; background: #181818; padding: 15px; min-height: 100vh; border-right: 1px solid #333; flex-shrink: 0; }
         sidebar h3 { font-size: 14px; color: #888; text-transform: uppercase; margin-top: 15px; }
         sidebar ul { list-style: none; padding: 0; margin: 0; }
         sidebar li a { color: #bbb; text-decoration: none; display: block; padding: 6px 0; font-size: 13px; }
-        sidebar li a:hover { color: #ff3366; }
+        sidebar li a:hover, sidebar li a.active { color: #ff3366; font-weight: bold; }
 
         .content { flex-grow: 1; padding: 20px; }
         .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
@@ -61,16 +61,12 @@
     <sidebar>
         <h3>Categories</h3>
         <ul>
-            <li><a href="#">Amateur</a></li>
-            <li><a href="#">Anal</a></li>
-            <li><a href="#">Asian</a></li>
-            <li><a href="#">Babe</a></li>
-            <li><a href="#">BBW</a></li>
-            <li><a href="#">Big Ass</a></li>
-            <li><a href="#">Blowjob</a></li>
-            <li><a href="#">Cougar</a></li>
-            <li><a href="#">MILF</a></li>
-            <li><a href="#">Petite</a></li>
+            <li><a href="{% url 'video_list' %}" {% if not selected_category %}style="color:#ff3366; font-weight:bold;"{% endif %}>All Categories</a></li>
+            {% for cat in categories %}
+                <li><a href="{% url 'video_list' %}?category={{ cat.slug }}" {% if selected_category == cat.slug %}style="color:#ff3366; font-weight:bold;"{% endif %}>{{ cat.name }}</a></li>
+            {% empty %}
+                <li><span style="color: #666; font-size: 12px;">No categories created yet.</span></li>
+            {% endfor %}
         </ul>
     </sidebar>
 
