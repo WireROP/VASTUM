@@ -1,6 +1,9 @@
+from core import views
 from django.urls import path
-from . import views
+
+app_name = 'core'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.video_list_view, name='video_list'),
+    path('video/<int:pk>/', views.video_detail_view, name='video_detail'),
 ]
