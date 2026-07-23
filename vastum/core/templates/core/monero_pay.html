@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Monero Payment</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+    <div class="bg-gray-800 p-8 rounded shadow-md w-[450px] text-center flex flex-col gap-4">
+        <h2 class="text-xl font-bold text-yellow-500">Pay with Monero (XMR)</h2>
+        <p class="text-sm text-gray-300">Send XMR to the platform address below to fund ad views or creator subscriptions:</p>
+        <div class="bg-gray-900 p-3 rounded text-xs break-all text-yellow-400 font-mono border border-gray-700">
+            {{ monero_address }}
+        </div>
+        <a href="{% url 'video_list' %}" class="bg-gray-700 py-2 rounded text-sm">Return Home</a>
+    </div>
+</body>
+</html>

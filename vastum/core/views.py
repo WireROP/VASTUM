@@ -1,6 +1,10 @@
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from .forms import VideoUploadForm
 from .models import Video
 
 
@@ -50,7 +54,68 @@ def video_detail_view(request, pk):
   video.save(update_fields=['views'])
 
   related_videos = Video.objects.exclude(pk=video.pk)[:8]
-
   context = {'video': video, 'related_videos': related_videos}
-
   return render(request, 'core/video_detail.html', context)
+
+
+# --- Authentication Views ---
+
+
+def register_view(request):
+  if request.method == 'POST':
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      login(request, user)
+      return redirect('video_list')
+  else:
+    form = UserCreationForm()
+  return render(request, 'core/register.html', {'form': form})
+
+
+def login_view(request):
+  if request.method == 'POST':
+    form = AuthenticationForm(request, data=request.POST)
+    if form.is_valid():
+      user = form.get_user()
+      login(request, user)
+      return redirect('video_list')
+  else:
+    form = AuthenticationForm()
+  return render(request, 'core/login.html', {'form': form})
+
+
+def logout_view(request):
+  logout(request)
+  return redirect('video_list')
+
+
+# --- Creator Upload View ---
+
+
+@login_required
+def upload_video_view(request):
+  if request.method == 'POST':
+    form = VideoUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+      video = form.save(commit=False)
+      # Ensure user owns the channel selected
+      if video.channel.owner == request.user:
+        video.save()
+        return redirect('video_list')
+  else:
+    form = VideoUploadForm()
+  return render(request, 'core/upload.html', {'form': form})
+
+
+# --- Monero Payment Gateway Placeholder View ---
+
+
+@login_required
+def monero_payment_view(request):
+  # Integration point for Monero RPC wallet / Payment Gateway (e.g., BTCPay Server or custom monero-rpc)
+  platform_monero_address = (
+      '888888888888888888888888888888888888888888888888888888888888888888888888888888'
+  )
+  context = {'monero_address': platform_monero_address}
+  return render(request, 'core/monero_pay.html', context)
