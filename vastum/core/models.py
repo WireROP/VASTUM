@@ -21,11 +21,9 @@ class Video(models.Model):
   channel = models.ForeignKey(
       Channel, on_delete=models.CASCADE, related_name='videos'
   )
-
   file_1080p = models.FileField(upload_to='videos/1080p/', blank=True, null=True)
   file_720p = models.FileField(upload_to='videos/720p/', blank=True, null=True)
   file_480p = models.FileField(upload_to='videos/480p/', blank=True, null=True)
-
   thumbnail = models.ImageField(upload_to='thumbnails/')
   duration = models.CharField(max_length=20, default='00:00')
   views = models.PositiveIntegerField(default=0)

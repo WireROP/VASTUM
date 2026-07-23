@@ -113,7 +113,6 @@ def upload_video_view(request):
 
 @login_required
 def monero_payment_view(request):
-  # Integration point for Monero RPC wallet / Payment Gateway (e.g., BTCPay Server or custom monero-rpc)
   platform_monero_address = (
       '888888888888888888888888888888888888888888888888888888888888888888888888888888'
   )

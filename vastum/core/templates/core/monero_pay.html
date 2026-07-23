@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>Monero Payment</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
-    <div class="bg-gray-800 p-8 rounded shadow-md w-[450px] text-center flex flex-col gap-4">
-        <h2 class="text-xl font-bold text-yellow-500">Pay with Monero (XMR)</h2>
-        <p class="text-sm text-gray-300">Send XMR to the platform address below to fund ad views or creator subscriptions:</p>
-        <div class="bg-gray-900 p-3 rounded text-xs break-all text-yellow-400 font-mono border border-gray-700">
-            {{ monero_address }}
-        </div>
-        <a href="{% url 'video_list' %}" class="bg-gray-700 py-2 rounded text-sm">Return Home</a>
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; background: #1f1f1f; padding: 30px; border-radius: 8px; border: 1px solid #333; text-align: center;">
+    <h2 style="color: #ff3366;">Fund with Monero (XMR)</h2>
+    <p style="color: #ccc; font-size: 14px;">Send your XMR contribution or payment securely to the platform address below:</p>
+    <div style="background: #121212; padding: 15px; border: 1px dashed #444; word-break: break-all; font-family: monospace; color: #fff; margin: 20px 0; border-radius: 4px;">
+        {{ monero_address }}
     </div>
-</body>
-</html>
+    <p style="font-size: 12px; color: #888;">Payments are verified automatically via network confirmation.</p>
+</div>
+{% endblock %}
