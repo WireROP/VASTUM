@@ -45,7 +45,7 @@
         {% if user.is_authenticated %}
             <span>Hello, {{ user.username }}</span>
             <a href="{% url 'upload_video' %}" class="btn-upload">Upload</a>
-            <a href="{% url 'fund_xmr' %}">Fund with XMR</a>
+            <a href="{% url 'monero_pay' %}">Fund with XMR</a>
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
                 <button type="submit" style="background:none; border:none; color:#ccc; cursor:pointer; margin-left:15px;">Logout</button>
